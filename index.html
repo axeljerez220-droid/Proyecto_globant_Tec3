@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090d18">
+  <title>Lumenfall // Neon Arena</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <main class="game-shell">
+    <header class="topbar">
+      <div class="brand-mark">
+        <span class="brand-dot"></span><span>LUMENFALL</span><small>NEON ARENA</small>
+      </div>
+
+      <div class="status-strip">
+        <div class="stat">
+          <span class="stat-label">SCORE</span>
+          <strong id="scoreValue">000000</strong>
+        </div>
+
+        <div class="stat">
+          <span class="stat-label">WAVE</span>
+          <strong id="waveValue">01</strong>
+        </div>
+
+        <button
+          class="icon-button"
+          id="pauseButton"
+          aria-label="Pausar partida"
+          title="Pausar partida"
+        >
+          Ⅱ
+        </button>
+      </div>
+    </header>
+
+    <section class="arena-wrap">
+      <canvas id="gameCanvas" aria-label="Arena de juego Lumenfall"></canvas>
+      <canvas id="sceneCanvas" aria-hidden="true"></canvas>
+
+      <div class="hud hud-left">
+        <div class="hud-card objective-card">
+          <span class="eyebrow">MISSION // SURVIVE</span>
+          <strong id="objectiveText">ELIMINA LA OLEADA</strong>
+
+          <div class="progress-track">
+            <i id="waveProgress"></i>
+          </div>
+
+          <span class="micro" id="waveHint">Escuadron detectado</span>
+        </div>
+
+        <div class="hud-card bars-card">
+          <div class="bar-row">
+            <span>HULL</span>
+
+            <div class="bar-shell">
+              <i id="healthBar"></i>
+            </div>
+
+            <b id="healthText">100%</b>
+          </div>
+
+          <div class="bar-row energy-row">
+            <span>CORE</span>
+
+            <div class="bar-shell">
+              <i id="energyBar"></i>
+            </div>
+
+            <b id="energyText">100%</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="hud hud-right">
+        <div class="combo-badge" id="comboBadge">
+          <span>COMBO</span>
+          <strong id="comboValue">x1</strong>
+        </div>
+
+        <div class="mini-log" id="eventLog">
+          <span>SYS // Arena online</span>
+          <span>SYS // Esperando piloto</span>
+        </div>
+      </div>
+
+      <div class="crosshair" id="crosshair"></div>
+
+      <section class="overlay active" id="startOverlay">
+        <div class="panel start-panel">
+          <div class="panel-kicker">SECTOR 07 / LIVE SIMULATION</div>
+          <h1>LUMEN<span>FALL</span></h1>
+          <p class="lead">Aguanta las oleadas. Reclama la luz.</p>
+          <p class="sublead">Una arena neon de reflejos, riesgo y decisiones rapidas.</p>
+
+          <button class="primary-button" id="startButton">
+            INICIAR DESCENSO <span>→</span>
+          </button>
+
+          <div class="controls-row">
+            <span><kbd>WASD</kbd> Mover</span>
+            <span><kbd>MOUSE</kbd> Apuntar</span>
+            <span><kbd>CLICK</kbd> Disparar</span>
+            <span><kbd>SPACE</kbd> Pulso</span>
+            <span><kbd>SHIFT</kbd> Dash</span>
+          </div>
+
+          <div class="best-score">
+            MEJOR MARCA <strong id="bestScoreStart">000000</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="overlay" id="pauseOverlay">
+        <div class="panel compact-panel">
+          <div class="panel-kicker">TRANSMISION CONGELADA</div>
+          <h2>SISTEMA EN PAUSA</h2>
+          <p>La arena espera tus ordenes.</p>
+
+          <button class="primary-button" id="resumeButton">
+            CONTINUAR <span>→</span>
+          </button>
+
+          <button class="text-button" id="restartPauseButton">
+            Reiniciar simulacion
+          </button>
+        </div>
+      </section>
+
+      <section class="overlay" id="upgradeOverlay">
+        <div class="panel upgrade-panel">
+          <div class="panel-kicker">WAVE CLEAR / SYSTEM EVOLUTION</div>
+          <h2>ELIGE TU VENTAJA</h2>
+          <p>La siguiente oleada sera mas hostil. Ajusta tu nave.</p>
+
+          <div class="upgrade-grid" id="upgradeChoices"></div>
+
+          <span class="micro upgrade-note">
+            La eleccion se aplica de inmediato
+          </span>
+        </div>
+      </section>
+
+      <section class="overlay" id="gameOverOverlay">
+        <div class="panel compact-panel">
+          <div class="panel-kicker danger-text">SIGNAL LOST / PILOT DOWN</div>
+          <h2>LUZ EXTINGUIDA</h2>
+          <p id="gameOverMessage">La arena ha ganado esta vez.</p>
+
+          <div class="result-grid">
+            <div>
+              <span>SCORE FINAL</span>
+              <strong id="finalScore">000000</strong>
+            </div>
+
+            <div>
+              <span>OLEADA</span>
+              <strong id="finalWave">01</strong>
+            </div>
+
+            <div>
+              <span>MEJOR MARCA</span>
+              <strong id="bestScoreEnd">000000</strong>
+            </div>
+          </div>
+
+          <button class="primary-button" id="restartButton">
+            VOLVER A DESCENDER <span>↻</span>
+          </button>
+        </div>
+      </section>
+    </section>
+
+    <footer class="bottombar">
+      <div class="footer-note">
+        <span class="pulse-dot"></span>
+        LIVE FEED
+        <span id="footerStatus">Sistema estable</span>
+      </div>
+
+      <div class="footer-hint">
+        RANGO <strong id="rankValue">ROOKIE</strong>
+        <span class="divider"></span>
+        <span class="desktop-only">
+          Manten <kbd>SPACE</kbd> para emitir pulso
+        </span>
+        <span class="mobile-only">Controles tactiles activos</span>
+      </div>
+    </footer>
+  </main>
+
+  <div class="touch-controls" id="touchControls">
+    <div class="joystick" id="joystick">
+      <span></span>
+    </div>
+
+    <div class="touch-actions">
+      <button class="touch-action dash-action" id="touchDash">»</button>
+      <button class="touch-action" id="touchPulse">✦</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
